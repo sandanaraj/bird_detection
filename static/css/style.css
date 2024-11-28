@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#video {
+    border: 5px solid #4CAF50;
+    border-radius: 10px;
+}
+
+.alert {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #d9534f;
+    display: none;
+}
+
+.detected {
+    display: block;
+    color: #d9534f;
+}
+
