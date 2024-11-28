@@ -1,0 +1,6 @@
+flask
+tensorflow
+tensorflow-hub
+opencv-python-headless
+numpy
+
