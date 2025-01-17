@@ -3,20 +3,24 @@ import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
 from flask import Flask, render_template, Response, jsonify
-import threading
-from playsound import playsound
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+import io
+import threading
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
 
-# Load the TensorFlow model from TensorFlow Hub
+# Load TensorFlow model from TensorFlow Hub
 detector = hub.load("https://tfhub.dev/tensorflow/ssd_mobilenet_v2/2")
 print("Model loaded.")
 
 app = Flask(__name__)
-cap = cv2.VideoCapture(0)
-lock = threading.Lock()
+
+# Use external video source or a file instead of a local webcam
+# Replace with a live IP camera URL or a video file path
+cap = cv2.VideoCapture("your_video_file.mp4")  # Replace with your video file or IP camera URL
 
 # Global variables
+lock = threading.Lock()
 bird_detected = False
 frame_count = 0
 confidence_scores = []
@@ -59,10 +63,6 @@ def draw_bounding_box(frame, box):
     cv2.rectangle(frame, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
     cv2.putText(frame, "Bird", (x_min, y_min - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
 
-# Play alarm sound when bird is detected
-def play_alarm():
-    PlaySound("alarm.wav", winsound.SND_FILENAME)
-
 # Log confidence scores for the graph
 def log_confidence(frame_number, confidence):
     global confidence_scores, frame_numbers
@@ -92,21 +92,23 @@ def generate_video():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-# Update the live graph
-def update_graph(i):
-    plt.cla()  # Clear the axes
-    plt.plot(frame_numbers, confidence_scores, label="Confidence Score")
-    plt.axhline(y=0.5, color='r', linestyle='--', label="Threshold (0.5)")
-    plt.xlabel("Frame Number")
-    plt.ylabel("Confidence Score")
-    plt.title("Bird Detection Confidence Over Time")
-    plt.legend(loc="upper right")
-    plt.tight_layout()
+# Generate the confidence graph
+@app.route('/graph')
+def graph():
+    global frame_numbers, confidence_scores
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    axis.plot(frame_numbers, confidence_scores, label="Confidence Score")
+    axis.set_title("Bird Detection Confidence Over Time")
+    axis.set_xlabel("Frame Number")
+    axis.set_ylabel("Confidence Score")
+    axis.set_ylim([0, 1])
+    axis.legend()
 
-# Start the graph in a separate thread
-def start_graph():
-    ani = FuncAnimation(plt.gcf(), update_graph, interval=1000)
-    plt.show()
+    canvas = FigureCanvas(fig)
+    output = io.BytesIO()
+    canvas.print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
 
 # Flask routes
 @app.route('/')
@@ -120,8 +122,6 @@ def video_feed():
 @app.route('/bird_status')
 def bird_status():
     global bird_detected
-    if bird_detected:
-        play_alarm()
     return jsonify({'bird_detected': bird_detected})
 
 # Release the camera on exit
@@ -130,8 +130,6 @@ import atexit
 def release_camera():
     cap.release()
 
-# Start Flask and the graph thread
+# Run the Flask app
 if __name__ == '__main__':
-    graph_thread = threading.Thread(target=start_graph, daemon=True)
-    graph_thread.start()
-    app.run(debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, threaded=True)
