@@ -2,6 +2,6 @@ flask
 tensorflow
 tensorflow-hub
 numpy
-matplotlib
 opencv-python-headless
-playsound
+matplotlib
+gunicorn
