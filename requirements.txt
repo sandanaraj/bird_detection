@@ -4,3 +4,4 @@ tensorflow-hub
 numpy
 matplotlib
 opencv-python-headless
+playsound
