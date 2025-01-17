@@ -4,7 +4,7 @@ import tensorflow_hub as hub
 import numpy as np
 from flask import Flask, render_template, Response, jsonify
 import threading
-import winsound
+from playsound import playsound
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
@@ -61,7 +61,7 @@ def draw_bounding_box(frame, box):
 
 # Play alarm sound when bird is detected
 def play_alarm():
-    winsound.PlaySound("alarm.wav", winsound.SND_FILENAME)
+    PlaySound("alarm.wav", winsound.SND_FILENAME)
 
 # Log confidence scores for the graph
 def log_confidence(frame_number, confidence):
