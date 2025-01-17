@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "bird_detection.py" }
+    { "source": "/(.*)", "destination": "bird_detection" }
   ]
 }
