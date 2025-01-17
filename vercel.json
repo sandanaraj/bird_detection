@@ -1,5 +1,9 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "bird_detection" }
-  ]
+    "version": 2,
+    "builds": [
+        {"src": "bird_detection.py", "use": "@vercel/python"}
+    ],
+    "routes": [
+        {"src": "/(.*)", "dest": "bird_detection.py"}
+    ]
 }
