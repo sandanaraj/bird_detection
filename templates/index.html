@@ -10,7 +10,9 @@
     <div class="container">
         <h1>Real-time Bird Detection</h1>
         <img id="video" src="{{ url_for('video_feed') }}" width="640" height="480" />
-        <div id="alert" class="alert">Bird Detected!</div>
+    <h2>Bird Detection Confidence Graph</h2>
+    <img src="/graph" alt="Confidence Graph" style="width: 80%; height: auto; border: 2px solid black;">
+        
     </div>
 
     <script src="{{url_for('static',filename='js/script.js')}}"></script>
