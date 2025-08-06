@@ -1,7 +1,5 @@
 flask
 tensorflow
 tensorflow-hub
-numpy
 opencv-python-headless
-matplotlib
-gunicorn
+numpy 
